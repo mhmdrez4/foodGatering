@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String   @default("")
+  email     String   @default("")
+  password  String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model foods {
+  id            Int             @id @default(autoincrement())
+  name          String          @default("")
+  spicy_level   String          @default("")
+  quantity      Int             @default(0)
+  price         Float           @default(0) @db.Float
+  image         String          @default("")
+  createdAt     DateTime        @default(now())
+  updatedAte    DateTime        @updatedAt
+  order_details order_details[]
+}
+
+model orders_list {
+  id            Int             @id @default(autoincrement())
+  customer_name String          @default("")
+  table_number  String          @default("")
+  order_date    String          @default("")
+  createdAt     DateTime        @default(now())
+  updatedAte    DateTime        @updatedAt
+  order_details order_details[]
+}
+
+model order_details {
+  id       Int         @id @default(autoincrement())
+  order_id Int         @default(0)
+  food_id  Int         @default(0)
+  quantity Int         @default(0)
+  price    Float       @db.Float
+  order    orders_list @relation(fields: [order_id], references: [id])
+  food     foods       @relation(fields: [food_id], references: [id])
+}
